@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerDTO {
-    int customerId;
-    String name;
-    String address;
-    String phone;
-    String email;
-    int otpCode;
+    private String customerId; // Firebase document ID
+    private String name;
+    private String address;
+    private String phone;
+    private String email;
+    private int otpCode;
 }
