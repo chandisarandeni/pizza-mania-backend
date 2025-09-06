@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -17,13 +18,54 @@ public class CustomerService {
 
     // Save a customer
     public String saveCustomer(Customer customer) throws ExecutionException, InterruptedException {
-        Firestore db = FirestoreClient.getFirestore();
-        DocumentReference docRef = db.collection(COLLECTION_NAME).document(); // auto-generated ID
-        customer.setCustomerId(docRef.getId());
-        ApiFuture<WriteResult> future = docRef.set(customer);
-        future.get(); // wait for completion
-        return docRef.getId();
+        Firestore firestore = FirestoreClient.getFirestore();
+
+        // Check if phone number already exists
+        ApiFuture<QuerySnapshot> query = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("phone", customer.getPhone())
+                .get();
+
+        List<QueryDocumentSnapshot> existingCustomers = query.get().getDocuments();
+        if (!existingCustomers.isEmpty()) {
+            return "Error: Phone number already exists!";
+        }
+
+        // Generate customerId in format CSTM001, CSTM002, etc.
+        if (customer.getCustomerId() == null || customer.getCustomerId().isEmpty()) {
+            ApiFuture<QuerySnapshot> allCustomersQuery = firestore.collection(COLLECTION_NAME)
+                    .orderBy("customerId", Query.Direction.DESCENDING) // get the last inserted
+                    .limit(1)
+                    .get();
+
+            List<QueryDocumentSnapshot> docs = allCustomersQuery.get().getDocuments();
+            String newId;
+
+            if (docs.isEmpty()) {
+                // No customers yet → start from CSTM001
+                newId = "CSTM001";
+            } else {
+                String lastId = docs.get(0).getString("customerId");
+                if (lastId == null || lastId.isEmpty()) {
+                    newId = "CSTM001";
+                } else {
+                    // Extract number part (after "CSTM")
+                    int lastNumber = Integer.parseInt(lastId.replace("CSTM", ""));
+                    int nextNumber = lastNumber + 1;
+                    newId = String.format("CSTM%03d", nextNumber); // always 3 digits
+                }
+            }
+
+            customer.setCustomerId(newId);
+        }
+
+        // Save the customer document with newId as the document ID
+        ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME)
+                .document(customer.getCustomerId())
+                .set(customer);
+
+        return "Customer saved successfully with ID: " + customer.getCustomerId();
     }
+
 
     // Get all customers
     public List<Customer> getAllCustomers() throws ExecutionException, InterruptedException {
