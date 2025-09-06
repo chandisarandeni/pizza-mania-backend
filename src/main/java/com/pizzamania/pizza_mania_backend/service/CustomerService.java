@@ -27,6 +27,7 @@ public class CustomerService {
 
         List<QueryDocumentSnapshot> existingCustomers = query.get().getDocuments();
         if (!existingCustomers.isEmpty()) {
+            System.out.println("Phone number already exists: " + customer.getPhone());
             return "Error: Phone number already exists!";
         }
 
@@ -63,6 +64,7 @@ public class CustomerService {
                 .document(customer.getCustomerId())
                 .set(customer);
 
+        System.out.println("Customer saved with ID: " + customer.getCustomerId() + " at " + future.get().getUpdateTime());
         return "Customer saved successfully with ID: " + customer.getCustomerId();
     }
 
