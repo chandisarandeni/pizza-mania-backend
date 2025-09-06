@@ -6,9 +6,7 @@ import com.google.firebase.cloud.FirestoreClient;
 import com.pizzamania.pizza_mania_backend.entity.Customer;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -42,29 +40,36 @@ public class CustomerService {
             String newId;
 
             if (docs.isEmpty()) {
-                // No customers yet → start from CSTM001
                 newId = "CSTM001";
             } else {
                 String lastId = docs.get(0).getString("customerId");
                 if (lastId == null || lastId.isEmpty()) {
                     newId = "CSTM001";
                 } else {
-                    // Extract number part (after "CSTM")
                     int lastNumber = Integer.parseInt(lastId.replace("CSTM", ""));
                     int nextNumber = lastNumber + 1;
                     newId = String.format("CSTM%03d", nextNumber); // always 3 digits
                 }
             }
-
             customer.setCustomerId(newId);
         }
+
+        // ✅ Generate random 6-digit OTP
+        int otp = 100000 + new Random().nextInt(900000);
+        customer.setOtpCode(otp);
+
+        // ✅ Set OTP generated time
+        customer.setOtpGeneratedTime(new Date());
 
         // Save the customer document with newId as the document ID
         ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME)
                 .document(customer.getCustomerId())
                 .set(customer);
 
-        System.out.println("Customer saved with ID: " + customer.getCustomerId() + " at " + future.get().getUpdateTime());
+        System.out.println("Customer saved with ID: " + customer.getCustomerId()
+                + ", OTP: " + otp
+                + " at " + future.get().getUpdateTime());
+
         return "Customer saved successfully with ID: " + customer.getCustomerId();
     }
 

@@ -14,4 +14,5 @@ public class CustomerDTO {
     private String phone;
     private String email;
     private int otpCode;
+    private long otpGeneratedTime;
 }
