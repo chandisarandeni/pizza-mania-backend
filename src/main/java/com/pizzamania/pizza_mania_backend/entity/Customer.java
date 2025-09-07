@@ -16,6 +16,7 @@ public class Customer {
     private String address;
     private String phone;
     private String email;
+    private String password;
     private int otpCode;
     private Date otpGeneratedTime;
 }

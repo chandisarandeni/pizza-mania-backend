@@ -13,6 +13,7 @@ public class CustomerDTO {
     private String address;
     private String phone;
     private String email;
+    private String password;
     private int otpCode;
     private long otpGeneratedTime;
 }
