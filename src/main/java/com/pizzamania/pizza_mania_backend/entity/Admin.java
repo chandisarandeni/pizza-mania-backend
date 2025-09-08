@@ -4,19 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class Customer {
+public class Admin {
 
-    private String customerId;
+    private String adminId;
     private String name;
-    private String address;
-    private String phone;
-    private String email;
+    private String username;
     private String password;
-    private int otpCode;
-    private Date otpGeneratedTime;
 }
