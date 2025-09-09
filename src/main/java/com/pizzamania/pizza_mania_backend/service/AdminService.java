@@ -1,10 +1,17 @@
 package com.pizzamania.pizza_mania_backend.service;
 
+import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.DocumentReference;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.firebase.cloud.FirestoreClient;
 import com.pizzamania.pizza_mania_backend.entity.Admin;
+import com.pizzamania.pizza_mania_backend.entity.Customer;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -56,5 +63,20 @@ public class AdminService {
                 .set(admin);
 
         return admin;
+    }
+
+    // Get all admins
+    public List<Admin> getAllAdmins() throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        ApiFuture<com.google.cloud.firestore.QuerySnapshot> future = db.collection(COLLECTION_NAME).get();
+        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
+
+        List<Admin> admins = new ArrayList<>();
+        for (QueryDocumentSnapshot document : documents) {
+            admins.add(document.toObject(Admin.class));
+        }
+
+        return admins;
     }
 }

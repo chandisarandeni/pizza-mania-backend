@@ -4,10 +4,10 @@ import com.pizzamania.pizza_mania_backend.entity.Admin;
 import com.pizzamania.pizza_mania_backend.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 @RestController
 @RequestMapping("/api/v1/admins")
@@ -28,6 +28,21 @@ public class AdminController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error creating admin: " + e.getMessage());
+        }
+    }
+
+    // Get all admins
+    @GetMapping
+    public ResponseEntity<?> getAllAdmins() {
+        try {
+            List<Admin> admins = adminService.getAllAdmins();
+            return ResponseEntity.ok(admins);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error retrieving admins: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
         }
     }
 }
