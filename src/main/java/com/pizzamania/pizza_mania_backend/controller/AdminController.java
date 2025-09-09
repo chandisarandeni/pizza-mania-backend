@@ -64,4 +64,22 @@ public class AdminController {
         }
     }
 
+
+    // Update admin by ID
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateAdmin(@PathVariable("id") String id, @RequestBody Admin updatedAdmin) {
+        try {
+            Admin admin = adminService.updateAdmin(id, updatedAdmin);
+            return ResponseEntity.ok(admin);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error updating admin: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+        }
+    }
+
 }

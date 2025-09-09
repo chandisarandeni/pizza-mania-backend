@@ -95,4 +95,26 @@ public class AdminService {
         }
     }
 
+
+    // Update admin
+    public Admin updateAdmin(String adminId, Admin updatedAdmin) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        var docRef = db.collection(COLLECTION_NAME).document(adminId);
+        var future = docRef.get();
+        var document = future.get();
+
+        if (!document.exists()) {
+            throw new IllegalArgumentException("Admin with ID " + adminId + " not found!");
+        }
+
+        // Ensure the adminId in DB remains consistent
+        updatedAdmin.setAdminId(adminId);
+
+        // Update document
+        docRef.set(updatedAdmin);
+
+        return updatedAdmin;
+    }
+
 }
