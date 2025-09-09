@@ -117,4 +117,21 @@ public class AdminService {
         return updatedAdmin;
     }
 
+
+    // Delete admin by ID
+    public String deleteAdmin(String adminId) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        var docRef = db.collection(COLLECTION_NAME).document(adminId);
+        var future = docRef.get();
+        var document = future.get();
+
+        if (!document.exists()) {
+            throw new IllegalArgumentException("Admin with ID " + adminId + " not found!");
+        }
+
+        docRef.delete();
+        return "Admin with ID " + adminId + " deleted successfully!";
+    }
+
 }
