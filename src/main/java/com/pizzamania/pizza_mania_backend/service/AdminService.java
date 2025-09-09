@@ -79,4 +79,20 @@ public class AdminService {
 
         return admins;
     }
+
+    // Get admin by ID
+    public Admin getAdminById(String adminId) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        var docRef = db.collection(COLLECTION_NAME).document(adminId);
+        var future = docRef.get();
+        var document = future.get();
+
+        if (document.exists()) {
+            return document.toObject(Admin.class);
+        } else {
+            return null; // No admin found with this ID
+        }
+    }
+
 }

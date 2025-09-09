@@ -45,4 +45,23 @@ public class AdminController {
             return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
         }
     }
+
+    // Get admin by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getAdminById(@PathVariable("id") String id) {
+        try {
+            Admin admin = adminService.getAdminById(id);
+            if (admin == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(admin);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error retrieving admin: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+        }
+    }
+
 }
