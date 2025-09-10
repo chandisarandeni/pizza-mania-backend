@@ -116,4 +116,21 @@ public class CustomerService {
         ApiFuture<WriteResult> future = docRef.delete();
         future.get();
     }
+
+    // -------------------- advanced features --------------------
+    // search customer by email address
+    public List<Customer> searchCustomersByEmail(String email) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        ApiFuture<QuerySnapshot> query = db.collection(COLLECTION_NAME)
+                .whereEqualTo("email", email)
+                .get();
+
+        List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+        List<Customer> customers = new ArrayList<>();
+        for (QueryDocumentSnapshot doc : documents) {
+            Customer customer = doc.toObject(Customer.class);
+            customers.add(customer);
+        }
+        return customers;
+    }
 }

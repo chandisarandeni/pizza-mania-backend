@@ -80,4 +80,18 @@ public class CustomerController {
             return ResponseEntity.status(500).body("Error deleting customer: " + e.getMessage());
         }
     }
+
+
+    // --------------------- advanced features --------------------
+    // Search customers by email
+    @GetMapping("/get-by-email")
+    public ResponseEntity<List<Customer>> searchCustomersByEmail(@RequestParam String email) {
+        try {
+            List<Customer> customers = customerService.searchCustomersByEmail(email);
+            return ResponseEntity.ok(customers);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).build();
+        }
+    }
 }
