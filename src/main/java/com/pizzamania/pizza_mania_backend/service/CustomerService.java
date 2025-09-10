@@ -15,24 +15,24 @@ public class CustomerService {
     private static final String COLLECTION_NAME = "customers";
 
     // Save a customer
+    // Save a customer
     public String saveCustomer(Customer customer) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
 
-        // Check if phone number already exists
-        ApiFuture<QuerySnapshot> query = firestore.collection(COLLECTION_NAME)
-                .whereEqualTo("phone", customer.getPhone())
+        // ✅ Check if email already exists
+        ApiFuture<QuerySnapshot> emailQuery = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("email", customer.getEmail())
                 .get();
-
-        List<QueryDocumentSnapshot> existingCustomers = query.get().getDocuments();
-        if (!existingCustomers.isEmpty()) {
-            System.out.println("Phone number already exists: " + customer.getPhone());
-            return "Error: Phone number already exists!";
+        List<QueryDocumentSnapshot> existingByEmail = emailQuery.get().getDocuments();
+        if (!existingByEmail.isEmpty()) {
+            System.out.println("Email already exists: " + customer.getEmail());
+            return "Error: Email already exists!";
         }
 
-        // Generate customerId in format CSTM001, CSTM002, etc.
+        // ✅ Generate customerId in format CSTM001, CSTM002, etc.
         if (customer.getCustomerId() == null || customer.getCustomerId().isEmpty()) {
             ApiFuture<QuerySnapshot> allCustomersQuery = firestore.collection(COLLECTION_NAME)
-                    .orderBy("customerId", Query.Direction.DESCENDING) // get the last inserted
+                    .orderBy("customerId", Query.Direction.DESCENDING)
                     .limit(1)
                     .get();
 
@@ -47,21 +47,20 @@ public class CustomerService {
                     newId = "CSTM001";
                 } else {
                     int lastNumber = Integer.parseInt(lastId.replace("CSTM", ""));
-                    int nextNumber = lastNumber + 1;
-                    newId = String.format("CSTM%03d", nextNumber); // always 3 digits
+                    newId = String.format("CSTM%03d", lastNumber + 1); // always 3 digits
                 }
             }
             customer.setCustomerId(newId);
         }
 
-        // ✅ Generate random 6-digit OTP
-        int otp = 100000 + new Random().nextInt(900000);
+        // ✅ Generate random 4-digit OTP
+        int otp = 1000 + new Random().nextInt(9000); // 1000-9999
         customer.setOtpCode(otp);
 
         // ✅ Set OTP generated time
         customer.setOtpGeneratedTime(new Date());
 
-        // Save the customer document with newId as the document ID
+        // ✅ Save the customer document with newId as the document ID
         ApiFuture<WriteResult> future = firestore.collection(COLLECTION_NAME)
                 .document(customer.getCustomerId())
                 .set(customer);
