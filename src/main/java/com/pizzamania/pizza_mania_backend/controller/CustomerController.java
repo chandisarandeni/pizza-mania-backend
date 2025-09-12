@@ -94,4 +94,53 @@ public class CustomerController {
             return ResponseEntity.status(500).build();
         }
     }
+
+    // --------------------- Send OTP --------------------
+    @PostMapping("/send-otp")
+    public ResponseEntity<String> sendOtp(@RequestParam String email) {
+        try {
+            String result = customerService.sendOtp(email);
+            return ResponseEntity.ok(result);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error sending OTP: " + e.getMessage());
+        }
+    }
+
+
+    // ------------------ Verify OTP endpoint ------------------
+    @GetMapping("/verify-otp")
+    public ResponseEntity<String> verifyOtp(@RequestParam String email, @RequestParam int otp) {
+        try {
+            String result = customerService.verifyOtp(email, otp);
+            if ("success".equals(result)) {
+                return ResponseEntity.ok("OTP verified successfully");
+            } else {
+                return ResponseEntity.badRequest().body(result);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error verifying OTP: " + e.getMessage());
+        }
+    }
+
+
+    // reset password
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email,
+                                                @RequestParam String newPassword) {
+        try {
+            String result = customerService.resetPassword(email, newPassword);
+            if (result.startsWith("Error")) {
+                return ResponseEntity.badRequest().body(result);
+            } else {
+                return ResponseEntity.ok(result);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error resetting password: " + e.getMessage());
+        }
+    }
+
+
 }
