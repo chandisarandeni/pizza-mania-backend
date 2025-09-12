@@ -124,4 +124,23 @@ public class CustomerController {
         }
     }
 
+
+    // reset password
+    @PostMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestParam String email,
+                                                @RequestParam String newPassword) {
+        try {
+            String result = customerService.resetPassword(email, newPassword);
+            if (result.startsWith("Error")) {
+                return ResponseEntity.badRequest().body(result);
+            } else {
+                return ResponseEntity.ok(result);
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error resetting password: " + e.getMessage());
+        }
+    }
+
+
 }

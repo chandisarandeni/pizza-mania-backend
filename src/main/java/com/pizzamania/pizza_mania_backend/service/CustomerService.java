@@ -216,4 +216,28 @@ public class CustomerService {
         return "success"; // OTP verified
     }
 
+    // reset password
+    public String resetPassword(String email, String newPassword) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        // Search customer by email
+        ApiFuture<QuerySnapshot> query = db.collection(COLLECTION_NAME)
+                .whereEqualTo("email", email)
+                .get();
+
+        List<QueryDocumentSnapshot> docs = query.get().getDocuments();
+        if (docs.isEmpty()) {
+            return "Error: Customer not found";
+        }
+
+        // Update password
+        Customer customer = docs.get(0).toObject(Customer.class);
+        customer.setPassword(newPassword);
+
+        // Save updated customer
+        docs.get(0).getReference().set(customer).get();
+
+        return "Password reset successfully";
+    }
+
 }
