@@ -13,7 +13,7 @@ public class Product {
     private String description;
     private double price;
     private String imageUrl;
-    private boolean isAvailable;
-    private boolean isAvailableInColombo;
-    private boolean isAvailableInGalle;
+    private Boolean isAvailable;
+    private Boolean isAvailableInColombo;
+    private Boolean isAvailableInGalle;
 }
