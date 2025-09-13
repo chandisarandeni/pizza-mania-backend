@@ -12,7 +12,8 @@ public class ProductDTO {
     private String name;
     private String description;
     private double price;
-    private String category;
     private String imageUrl;
     private boolean isAvailable;
+    private boolean isAvailableInColombo;
+    private boolean isAvailableInGalle;
 }
