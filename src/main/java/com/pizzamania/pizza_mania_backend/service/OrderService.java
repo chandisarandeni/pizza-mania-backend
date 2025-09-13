@@ -90,4 +90,42 @@ public class OrderService {
         ApiFuture<WriteResult> future = docRef.delete();
         return "Order deleted at " + future.get().getUpdateTime();
     }
+
+    //----------------- advanced operations-----------------
+
+    // Search orders by customerId
+    public List<Order> getOrdersByCustomerId(String customerId) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        ApiFuture<QuerySnapshot> query = db.collection(COLLECTION_NAME)
+                .whereEqualTo("customerId", customerId)
+                .get();
+
+        List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+        List<Order> orders = new ArrayList<>();
+
+        for (QueryDocumentSnapshot doc : documents) {
+            orders.add(doc.toObject(Order.class));
+        }
+        return orders;
+    }
+
+
+    // Search orders by branchId
+    public List<Order> getOrdersByBranchId(String branchId) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        ApiFuture<QuerySnapshot> query = db.collection(COLLECTION_NAME)
+                .whereEqualTo("branchId", branchId)
+                .get();
+
+        List<QueryDocumentSnapshot> documents = query.get().getDocuments();
+        List<Order> orders = new ArrayList<>();
+
+        for (QueryDocumentSnapshot doc : documents) {
+            orders.add(doc.toObject(Order.class));
+        }
+        return orders;
+    }
+
 }

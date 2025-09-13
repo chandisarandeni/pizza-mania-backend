@@ -45,4 +45,18 @@ public class OrderController {
     public String deleteOrder(@PathVariable String id) throws ExecutionException, InterruptedException {
         return orderService.deleteOrder(id);
     }
+
+    //----------------------- advanced operations -------------------
+    // Get orders by customerId
+    @GetMapping("/customer/{customerId}")
+    public List<Order> getOrdersByCustomerId(@PathVariable String customerId) throws ExecutionException, InterruptedException {
+        return orderService.getOrdersByCustomerId(customerId);
+    }
+
+    // Get orders by branchId
+    @GetMapping("/branch/{branchId}")
+    public List<Order> getOrdersByBranchId(@PathVariable String branchId) throws ExecutionException, InterruptedException {
+        return orderService.getOrdersByBranchId(branchId);
+    }
+
 }
