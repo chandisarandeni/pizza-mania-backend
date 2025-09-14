@@ -1,3 +1,4 @@
+// File: src/main/java/com/pizzamania/pizza_mania_backend/entity/OrderItem.java
 package com.pizzamania.pizza_mania_backend.entity;
 
 import lombok.AllArgsConstructor;
@@ -8,12 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class OrderItem {
-
-    private String orderItemId;
-    private String orderId;
     private String productId;
-    private String orderDescription;
-    private float unitPrice;
+    private String productName;
+    private String productSize;
     private int quantity;
-    private float subtotal;
+    private double price;
 }

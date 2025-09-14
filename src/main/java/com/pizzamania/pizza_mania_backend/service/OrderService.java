@@ -1,3 +1,4 @@
+// File: src/main/java/com/pizzamania/pizza_mania_backend/service/OrderService.java
 package com.pizzamania.pizza_mania_backend.service;
 
 import com.google.api.core.ApiFuture;
@@ -15,11 +16,11 @@ public class OrderService {
 
     private static final String COLLECTION_NAME = "Orders";
 
-    // ✅ Add a new order
+    // Add new order
     public String addOrder(Order order) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
 
-        // Auto-generate ID if not set
+        // Auto-generate orderId if missing
         if (order.getOrderId() == null || order.getOrderId().isEmpty()) {
             ApiFuture<QuerySnapshot> query = firestore.collection(COLLECTION_NAME)
                     .orderBy("orderId", Query.Direction.DESCENDING)
@@ -48,7 +49,7 @@ public class OrderService {
                 " at " + future.get().getUpdateTime();
     }
 
-    // ✅ Get all orders
+    // Get all orders
     public List<Order> getAllOrders() throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         ApiFuture<QuerySnapshot> future = db.collection(COLLECTION_NAME).get();
@@ -56,13 +57,12 @@ public class OrderService {
 
         List<Order> orders = new ArrayList<>();
         for (QueryDocumentSnapshot doc : documents) {
-            Order order = doc.toObject(Order.class);
-            orders.add(order);
+            orders.add(doc.toObject(Order.class));
         }
         return orders;
     }
 
-    // ✅ Get order by ID
+    // Get order by ID
     public Order getOrderById(String id) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         DocumentReference docRef = db.collection(COLLECTION_NAME).document(id);
@@ -75,7 +75,7 @@ public class OrderService {
         return null;
     }
 
-    // ✅ Update order
+    // Update order
     public String updateOrder(Order order) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         DocumentReference docRef = db.collection(COLLECTION_NAME).document(order.getOrderId());
@@ -83,7 +83,7 @@ public class OrderService {
         return "Order updated at " + future.get().getUpdateTime();
     }
 
-    // ✅ Delete order
+    // Delete order
     public String deleteOrder(String id) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
         DocumentReference docRef = db.collection(COLLECTION_NAME).document(id);
@@ -91,41 +91,29 @@ public class OrderService {
         return "Order deleted at " + future.get().getUpdateTime();
     }
 
-    //----------------- advanced operations-----------------
-
-    // Search orders by customerId
+    // Search by customerId
     public List<Order> getOrdersByCustomerId(String customerId) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
-
         ApiFuture<QuerySnapshot> query = db.collection(COLLECTION_NAME)
                 .whereEqualTo("customerId", customerId)
                 .get();
-
-        List<QueryDocumentSnapshot> documents = query.get().getDocuments();
         List<Order> orders = new ArrayList<>();
-
-        for (QueryDocumentSnapshot doc : documents) {
+        for (QueryDocumentSnapshot doc : query.get().getDocuments()) {
             orders.add(doc.toObject(Order.class));
         }
         return orders;
     }
 
-
-    // Search orders by branchId
+    // Search by branchId
     public List<Order> getOrdersByBranchId(String branchId) throws ExecutionException, InterruptedException {
         Firestore db = FirestoreClient.getFirestore();
-
         ApiFuture<QuerySnapshot> query = db.collection(COLLECTION_NAME)
                 .whereEqualTo("branchId", branchId)
                 .get();
-
-        List<QueryDocumentSnapshot> documents = query.get().getDocuments();
         List<Order> orders = new ArrayList<>();
-
-        for (QueryDocumentSnapshot doc : documents) {
+        for (QueryDocumentSnapshot doc : query.get().getDocuments()) {
             orders.add(doc.toObject(Order.class));
         }
         return orders;
     }
-
 }
