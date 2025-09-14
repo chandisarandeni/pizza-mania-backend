@@ -240,4 +240,31 @@ public class CustomerService {
         return "Password reset successfully";
     }
 
+    // Update customer by email
+    public String updateCustomerByEmail(String email, Customer updatedCustomer) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        // Search for customer by email
+        ApiFuture<QuerySnapshot> query = db.collection(COLLECTION_NAME)
+                .whereEqualTo("email", email)
+                .get();
+        List<QueryDocumentSnapshot> docs = query.get().getDocuments();
+
+        if (docs.isEmpty()) {
+            return "Error: Customer with email " + email + " not found!";
+        }
+
+        // Get the first customer document reference
+        DocumentReference docRef = docs.get(0).getReference();
+
+        // Keep the original customerId
+        updatedCustomer.setCustomerId(docs.get(0).getString("customerId"));
+
+        // Save updated customer
+        docRef.set(updatedCustomer).get();
+
+        return "Customer updated successfully for email: " + email;
+    }
+
+
 }

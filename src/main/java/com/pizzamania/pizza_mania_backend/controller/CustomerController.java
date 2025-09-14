@@ -143,4 +143,13 @@ public class CustomerController {
     }
 
 
+    // Update customer by email
+    @PutMapping("/update-by-email/{email}")
+    public String updateCustomerByEmail(
+            @PathVariable String email,
+            @RequestBody Customer customer
+    ) throws ExecutionException, InterruptedException {
+        return customerService.updateCustomerByEmail(email, customer);
+    }
+
 }
