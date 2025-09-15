@@ -12,6 +12,7 @@ import java.util.Date;
 public class OrderDTO {
     private String orderId;
     private String customerId;
+    private String email;
     private String customerName;
     private String customerPhone;
     private String branchId;
