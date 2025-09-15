@@ -116,4 +116,18 @@ public class OrderService {
         }
         return orders;
     }
+
+    // Search by email
+    public List<Order> getOrdersByCustomerEmail(String email) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+        ApiFuture<QuerySnapshot> query = db.collection(COLLECTION_NAME)
+                .whereEqualTo("email", email)   // fixed field name
+                .get();
+        List<Order> orders = new ArrayList<>();
+        for (QueryDocumentSnapshot doc : query.get().getDocuments()) {
+            orders.add(doc.toObject(Order.class));
+        }
+        return orders;
+    }
+
 }

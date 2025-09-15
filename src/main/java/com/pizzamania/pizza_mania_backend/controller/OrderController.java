@@ -50,4 +50,11 @@ public class OrderController {
     public List<Order> getOrdersByBranchId(@PathVariable String branchId) throws ExecutionException, InterruptedException {
         return orderService.getOrdersByBranchId(branchId);
     }
+
+    @GetMapping("/email")
+    public List<Order> getOrdersByCustomerEmail(@RequestParam String email)
+            throws ExecutionException, InterruptedException {
+        return orderService.getOrdersByCustomerEmail(email);
+    }
+
 }
