@@ -13,5 +13,5 @@ public class AdminDTO {
     private String name;
     private String username;
     private String password;
-    private String branch;
+    private String branchId;
 }
