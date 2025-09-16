@@ -134,4 +134,24 @@ public class AdminService {
         return "Admin with ID " + adminId + " deleted successfully!";
     }
 
+    //----------------- advanced operations -----------------
+    // Get admin by username
+    public Admin getAdminByUsername(String username) throws ExecutionException, InterruptedException {
+        Firestore db = FirestoreClient.getFirestore();
+
+        var query = db.collection(COLLECTION_NAME)
+                .whereEqualTo("username", username)
+                .limit(1)
+                .get();
+
+        var documents = query.get().getDocuments();
+
+        if (documents.isEmpty()) {
+            return null; // No admin found with this username
+        }
+
+        return documents.get(0).toObject(Admin.class);
+    }
+
+
 }

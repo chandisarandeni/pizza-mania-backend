@@ -100,4 +100,23 @@ public class AdminController {
         }
     }
 
+    // Get admin by username
+    @GetMapping("/by-username/{username}")
+    public ResponseEntity<?> getAdminByUsername(@PathVariable("username") String username) {
+        try {
+            Admin admin = adminService.getAdminByUsername(username);
+            if (admin == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(admin);
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error retrieving admin by username: " + e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Unexpected error: " + e.getMessage());
+        }
+    }
+
+
 }
